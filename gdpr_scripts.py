@@ -39,14 +39,33 @@ class GDPRAudit(CrawlSpider):
         print('ALLOWED DOMAINS: ' + ','.join(self.allowed_domains))
 
     def parse_item(self, response):
-        
+        """ For each response, find the items we
+        are interested in """
+        forms = self.find_forms(response)
+        for form in forms:
+            yield form
 
         frames = self.find_iframes(response)
         for frame in frames:
             yield frame
 
-   
-   
+    def find_forms(self, response):
+        """ Look for HTML forms and collect some data about them """
+        # Find any <form> elements, ignoring things that look like
+        # search boxes. FIXME: parameterise the ignore list.
+        form_selector = '//form[not(contains(@id, "search"))]'
+        for form in response.xpath(form_selector):
+            form_data = WebThing()
+            form_data['t_type'] = 'form'
+            form_data['page'] = response.request.url
+            form_data['action'] = form.xpath('@action').extract_first()
+            form_data['f_id'] = form.xpath('@id').extract_first()
+            form_data['name'] = form.xpath('@name').extract_first() or ''
+            # Ignore hidden form inputs
+            form_data['inputs'] = ";".join(
+                form.xpath('.//input[not(@type="hidden")]/@name').extract())
+            yield form_data
+
     def find_iframes(self, response):
         """ Look for iframes and collect some data about them """
         iframe_selector = '//script'
@@ -56,5 +75,3 @@ class GDPRAudit(CrawlSpider):
             frame_data['page'] = response.request.url
             frame_data['action'] = iframe.xpath('@src').extract_first()
             yield frame_data
-            
-            
