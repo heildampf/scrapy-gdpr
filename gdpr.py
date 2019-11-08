@@ -78,12 +78,5 @@ class GDPRAudit(CrawlSpider):
             yield frame_data
             
             
-             iframe_selector = '//script'
-        for iframe in response.xpath(iframe_selector):
-            frame_data = WebThing()
-            frame_data['t_type'] = 'script'
-            frame_data['page'] = response.request.url
-            frame_data['action'] = iframe.xpath('@src').extract_first()
-            yield frame_data
-            
+
     
