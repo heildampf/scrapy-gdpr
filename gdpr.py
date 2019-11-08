@@ -49,11 +49,7 @@ class GDPRAudit(CrawlSpider):
         for frame in frames:
             yield frame
 
-        scripts = self.find_scripts(response)
-        for script in scripts:
-            yield script
-
-
+   
     def find_forms(self, response):
         """ Look for HTML forms and collect some data about them """
         # Find any <form> elements, ignoring things that look like
@@ -81,14 +77,13 @@ class GDPRAudit(CrawlSpider):
             frame_data['action'] = iframe.xpath('@src').extract_first()
             yield frame_data
             
-     def find_scripts(self, response):
-        """ Look for HTML forms and collect some data about them """
-        # Find any <form> elements, ignoring things that look like
-        # search boxes. FIXME: parameterise the ignore list.
-        script_selector = '//script'
-        for script in response.xpath(script_selector):
-            script_data = WebThing()
-            script_data['t_type'] = 'script'
-            script_data['page'] = response.request.url
-            script_data['action'] = script.xpath('@action').extract_first()
-            yield script_data
+            
+             iframe_selector = '//script'
+        for iframe in response.xpath(iframe_selector):
+            frame_data = WebThing()
+            frame_data['t_type'] = 'script'
+            frame_data['page'] = response.request.url
+            frame_data['action'] = iframe.xpath('@src').extract_first()
+            yield frame_data
+            
+    
