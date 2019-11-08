@@ -92,5 +92,3 @@ class GDPRAudit(CrawlSpider):
             script_data['page'] = response.request.url
             script_data['action'] = script.xpath('@action').extract_first()
             yield script_data
-
-
