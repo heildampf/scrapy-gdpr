@@ -48,10 +48,10 @@ class GDPRAudit(CrawlSpider):
 
     def find_iframes(self, response):
         """ Look for iframes and collect some data about them """
-        iframe_selector = '//script'
+        iframe_selector = '//https://www.googletagmanager.com/gtag/js?id='
         for iframe in response.xpath(iframe_selector):
             frame_data = WebThing()
-            frame_data['t_type'] = 'script'
+            frame_data['t_type'] = 'Google Tag Manager'
             frame_data['page'] = response.request.url
             frame_data['action'] = iframe.xpath('@src').extract_first()
             yield frame_data
